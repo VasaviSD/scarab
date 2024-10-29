@@ -50,6 +50,7 @@
 
 #include "cmp_model.h"
 #include "prefetcher/l2l1pref.h"
+#include "cache_miss_analyzer.h"
 
 /**************************************************************************************/
 /* Macros */
@@ -286,6 +287,17 @@ void update_dcache_stage(Stage_Data* src_sd) {
 
     line = (Dcache_Data*)cache_access(&dc->dcache, op->oracle_info.va,
                                       &line_addr, TRUE);
+    
+    uns set = (op->oracle_info.va >> dc->dcache.shift_bits) & dc->dcache.set_mask; // get index
+    uns valid_entries = 0;
+    for(uns kk = 0; kk < dc->dcache.assoc; kk++) {
+      Cache_Entry* entry = &dc->dcache.entries[set][kk];
+      if(entry->valid) {
+        valid_entries++;
+      }
+    }
+    int set_full = (valid_entries == dc->dcache.assoc);
+    
     op->dcache_cycle = cycle_count;
     dc->idle_cycle   = MAX2(dc->idle_cycle, cycle_count + DCACHE_CYCLES);
 
@@ -427,6 +439,14 @@ void update_dcache_stage(Stage_Data* src_sd) {
 
           if(!op->off_path) {
             STAT_EVENT(op->proc_id, DCACHE_MISS);
+            int miss_type = log_cache_miss(op->oracle_info.va, set_full);
+            if(miss_type == 0){
+              STAT_EVENT(op->proc_id, DCACHE_MISS_COMPULSORY);
+            } else if (miss_type == 1){
+              STAT_EVENT(op->proc_id, DCACHE_MISS_CAPACITY);
+            } else if (miss_type == 2){
+              STAT_EVENT(op->proc_id, DCACHE_MISS_CONFLICT);
+            }
             STAT_EVENT(op->proc_id, DCACHE_MISS_ONPATH);
             STAT_EVENT(op->proc_id, DCACHE_MISS_LD_ONPATH);
             op->oracle_info.dcmiss = TRUE;
@@ -482,6 +502,14 @@ void update_dcache_stage(Stage_Data* src_sd) {
 
           if(!op->off_path) {
             STAT_EVENT(op->proc_id, DCACHE_MISS);
+            int miss_type = log_cache_miss(op->oracle_info.va, set_full);
+            if(miss_type == 0){
+              STAT_EVENT(op->proc_id, DCACHE_MISS_COMPULSORY);
+            } else if (miss_type == 1){
+              STAT_EVENT(op->proc_id, DCACHE_MISS_CAPACITY);
+            } else if (miss_type == 2){
+              STAT_EVENT(op->proc_id, DCACHE_MISS_CONFLICT);
+            }
             STAT_EVENT(op->proc_id, DCACHE_MISS_ONPATH);
             STAT_EVENT(op->proc_id, DCACHE_MISS_LD_ONPATH);
             op->oracle_info.dcmiss = TRUE;
@@ -540,6 +568,14 @@ void update_dcache_stage(Stage_Data* src_sd) {
 
           if(!op->off_path) {
             STAT_EVENT(op->proc_id, DCACHE_MISS);
+            int miss_type = log_cache_miss(op->oracle_info.va, set_full);
+            if(miss_type == 0){
+              STAT_EVENT(op->proc_id, DCACHE_MISS_COMPULSORY);
+            } else if (miss_type == 1){
+              STAT_EVENT(op->proc_id, DCACHE_MISS_CAPACITY);
+            } else if (miss_type == 2){
+              STAT_EVENT(op->proc_id, DCACHE_MISS_CONFLICT);
+            }
             STAT_EVENT(op->proc_id, DCACHE_MISS_ONPATH);
             STAT_EVENT(op->proc_id, DCACHE_MISS_ST_ONPATH);
             op->oracle_info.dcmiss = TRUE;

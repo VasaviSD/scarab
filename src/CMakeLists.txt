@@ -58,6 +58,8 @@ foreach(dir IN LISTS scarab_dirs)
     set(srcs ${srcs} ${dir_srcs})
 endforeach()
 
+list(APPEND srcs cache_miss_analyzer.cpp)
+
 add_executable(scarab 
     ${srcs}
 )
