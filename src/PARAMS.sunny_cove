@@ -233,3 +233,9 @@
 
 --mem_ooo_stores                1
 --mem_obey_store_dep            1
+
+####################################
+# Two level branch predictor params
+
+--ghr_size                      16
+--pht_size                      16

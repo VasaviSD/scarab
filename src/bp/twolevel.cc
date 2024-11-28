@@ -22,6 +22,7 @@
 #include "twolevel.h"
 
 #include <math.h>
+#include <iostream>
 
 extern "C" {
 #include "bp/bp.param.h"
@@ -35,9 +36,8 @@ extern "C" {
 /**************************************************/
 /* Two level Branch Predictor Data Structures*/
 
-#define _i 8
-#define _j 8
-#define _k 16
+#define _i PHT_SIZE
+#define _k GHR_SIZE
 
 namespace {
   long long* global_history_register;
@@ -54,10 +54,12 @@ uns8 bp_twolevel_full(uns proc_id) { return 0; }
 
 
 void bp_twolevel_init() {
+  std::cout << "PHT_SIZE " << _i << std::endl;
+  std::cout << "GHR_SIZE " << _k << std::endl;
   /**************************************************/
   /* Initialize pattern_history_table*/
-  int rows = pow(2, _k);
-  int cols = pow(2, _j);
+  int rows = pow(2, _i);
+  int cols = pow(2, _k);
   int global_size = pow(2, _i);
 
   // Allocate memory for rows
@@ -90,7 +92,7 @@ uns8 bp_twolevel_pred(Op* op) {
   /* Make the prediction */
   const Addr address = op->oracle_info.pred_addr;
   unsigned int ghrIndex = address & ~(~0 << _i);
-  unsigned int phtIndex = address & ~(~0 << _j);
+  unsigned int phtIndex = address & ~(~0 << _i);
 	unsigned int ghr = global_history_register[ghrIndex];
   
   //Predict taken if the saturating counter value is greater than or equal to 2
@@ -110,7 +112,7 @@ void bp_twolevel_update(Op* op) {
   /* Update pattern_history_table*/
   const Addr address = op->oracle_info.pred_addr;
   unsigned int ghrIndex = address & ~(~0 << _i);
-  unsigned int phtIndex = address & ~(~0 << _j);
+  unsigned int phtIndex = address & ~(~0 << _i);
 	unsigned int ghr = global_history_register[ghrIndex];
 
   bool actual_outcome = (op->oracle_info.dir == TAKEN);
