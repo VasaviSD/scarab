@@ -30,22 +30,10 @@ extern "C" {
 
 /*************Interface to Scarab***************/
 void bp_twolevel_init(void);
-void bp_twolevel_init_gag(void);
-void bp_twolevel_init_gap(void);
-void bp_twolevel_init_pag(void);
-void bp_twolevel_init_pap(void);
 void bp_twolevel_timestamp(Op*);
 uns8 bp_twolevel_pred(Op*);
-uns8 bp_twolevel_pred_gag(Op*);
-uns8 bp_twolevel_pred_gap(Op*);
-uns8 bp_twolevel_pred_pag(Op*);
-uns8 bp_twolevel_pred_pap(Op*);
 void bp_twolevel_spec_update(Op*);
 void bp_twolevel_update(Op*);
-void bp_twolevel_update_gag(Op*);
-void bp_twolevel_update_gap(Op*);
-void bp_twolevel_update_pag(Op*);
-void bp_twolevel_update_pap(Op*);
 void bp_twolevel_retire(Op*);
 void bp_twolevel_recover(Recovery_Info*);
 uns8 bp_twolevel_full(uns);

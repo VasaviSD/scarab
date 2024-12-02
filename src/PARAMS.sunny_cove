@@ -237,5 +237,5 @@
 ####################################
 # Two level branch predictor params
 
---ghr_size                      16
---pht_size                      16
+--hrt_size                      256
+--ghr_size                      12
