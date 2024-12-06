@@ -135,7 +135,6 @@ long long get_cache_entry(Addr address) {
     
     if (lru_index == -1) { // No invalid entries, perform LRU replacement
         lru_index = find_evict_index(set);
-        set.entries[lru_index].history = 0;
     }
     
     set.entries[lru_index].tag = tag;
